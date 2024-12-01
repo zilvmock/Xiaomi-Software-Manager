@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -7,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using XiaomiSoftwareManager.Dialogs;
 using XiaomiSoftwareManager.Models;
+using XiaomiSoftwareManager.UserControls;
 
 namespace XiaomiSoftwareManager
 {
@@ -72,8 +74,36 @@ namespace XiaomiSoftwareManager
 
         private void AboutMenu_Click(object sender, RoutedEventArgs e)
         {
-            new CustomDialog($"{appInfo.Title}\n{appInfo.Version}\n\nDeveloped by {appInfo.Author}", "About", CustomDialog.DialogType.OK).ShowDialog();
+            AboutUserControl aboutControl = new($"{appInfo.Title}\n{appInfo.Version}\n\nDeveloped by {appInfo.Author}");
+            new CustomDialog(aboutControl, "About", CustomDialog.DialogType.OK).ShowDialog();
         }
+
+        private async void UpdateMenu_Click(object sender, RoutedEventArgs e)
+        {
+            UpdaterUserControl updaterControl = new();
+            CustomDialog updateDialog = new(updaterControl, "Updates", CustomDialog.DialogType.OK);
+            updateDialog.Show();
+
+            Updater updater = new();
+            // TODO: Prideti prie settingu ar gauti pre releases ar ne. Jei gauti: GetLatestReleaseAsync(true)
+            GitHubRelease? ver = await updater.GetLatestReleaseAsync();
+            
+            if (ver == null) 
+            {
+                updaterControl.ShowResults("Can't check it right now...");
+                return;
+            }
+
+            if (updater.updateIsAvailable(appInfo.Version, ver.TagName))
+            {
+                updaterControl.ShowResults("Update Available", $"{appInfo.Version} -> {ver.TagName}\nDo you want update now?");
+                updateDialog.ChangeButtons(CustomDialog.DialogType.YesNo);
+                updateDialog.FirstButton.Click += updater.DownloadUpdate;
+            }
+            else
+            {
+                updaterControl.ShowResults("Up to Date!", $"{appInfo.Version} === {ver.TagName}");
+            }
 
         }
     }

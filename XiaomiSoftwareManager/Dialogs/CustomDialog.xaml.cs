@@ -1,10 +1,11 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
+using static XiaomiSoftwareManager.Dialogs.CustomDialog;
 
 namespace XiaomiSoftwareManager.Dialogs
 {
     public partial class CustomDialog : Window
     {
-        private readonly bool canBeClosed;
         public enum DialogType
         {
             OK = 0,
@@ -12,12 +13,17 @@ namespace XiaomiSoftwareManager.Dialogs
             YesNo = 2,
         }
 
-        public CustomDialog(string message, string title = "Custom Dialog", DialogType dialogType = DialogType.OK)
+        public CustomDialog(UserControl content, string title = "Custom Dialog", DialogType dialogType = DialogType.OK)
         {
             InitializeComponent();
             this.Title = title;
-            MessageText.Text = message;
+            ContentControl.Content = content;
 
+            ChangeButtons(dialogType);
+        }
+
+        public void ChangeButtons(DialogType dialogType)
+        {
             switch (dialogType)
             {
                 case DialogType.OKCancel:
@@ -39,24 +45,21 @@ namespace XiaomiSoftwareManager.Dialogs
             }
         }
 
+        public void ToggleButtonsVisibility()
+        {
+            FirstButton.Visibility = FirstButton.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+            SecondButton.Visibility = SecondButton.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+
         private void FirstButton_Click(object sender, RoutedEventArgs e)
         {
-            if (canBeClosed)
-            {
-                Close();
-                return;
-            }
-            this.Hide();
+            Close();
         }
 
         private void SecondButton_Click(object sender, RoutedEventArgs e)
         {
-            if (canBeClosed)
-            {
-                Close();
-                return;
-            }
-            this.Hide();
+            Close();
         }
     }
 }

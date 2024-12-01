@@ -14,16 +14,8 @@
 			<RowDefinition Height="10*" />
 			<RowDefinition Height="3*" />
 		</Grid.RowDefinitions>
-		
-		<TextBlock Grid.Row="0"
-				   Name="MessageText"
-				   TextWrapping="Wrap"
-				   HorizontalAlignment="Center"
-				   VerticalAlignment="Center"
-				   TextAlignment="Center"
-				   FontSize="12"
-				   Margin="10"/>
 
+        <ContentControl Name="ContentControl" />
 
         <StackPanel Grid.Row="1"
 					Orientation="Horizontal" 
