@@ -75,6 +75,9 @@ namespace XiaomiSoftwareManager
             new CustomDialog($"{appInfo.Title}\n{appInfo.Version}\n\nDeveloped by {appInfo.Author}", "About", CustomDialog.DialogType.OK).ShowDialog();
         }
 
+        private void UpdateMenu_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
