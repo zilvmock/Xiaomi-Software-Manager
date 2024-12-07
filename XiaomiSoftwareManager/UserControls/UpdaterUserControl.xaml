@@ -13,32 +13,60 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0"
-                    HorizontalAlignment="Center"
+		<StackPanel Grid.Row="0"
+					HorizontalAlignment="Center"
 					VerticalAlignment="Center">
             <TextBlock Name="Status"
 					   HorizontalAlignment="Center"
 					   VerticalAlignment="Center"
-                       FontSize="24"
-                       FontWeight="SemiBold"
-                       Text="Checking for an update..."/>
-
-            <fa:ImageAwesome Icon="Refresh"
-							 Name="Spinner"
-                             Spin="True"
-                             Margin="10"
-							 VerticalAlignment="Center"
-							 HorizontalAlignment="Center"
-							 Width="24"/>
+					   FontSize="24"
+					   FontWeight="SemiBold"
+					   Text="Checking for an update..."/>
 
             <TextBlock Name="Results"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       FontSize="18"
-                       FontWeight="Normal"
-                       FontFamily="Consolas"
-                       TextAlignment="Center"
-                       Text="[Update available]"/>		
-        </StackPanel>
-    </Grid>
+					   HorizontalAlignment="Center"
+					   VerticalAlignment="Center"
+					   FontSize="18"
+					   FontWeight="Normal"
+					   FontFamily="Consolas"
+					   TextAlignment="Center"
+					   Text="[Update available]"/>
+
+            <StackPanel Name="DownloadPanel"
+						Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Margin="10">
+
+                <TextBlock Name="DownloadSpeed"
+						   Text="20 Mb/s"
+						   FontFamily="Consolas"
+                           Margin="0,0,10,0"/>
+
+                <Grid HorizontalAlignment="Center"
+                      VerticalAlignment="Center">
+                    
+					<ProgressBar Name="DownloadProgressBar"
+								 Value="80"
+								 Height="15"
+								 Width="150"
+								 SmallChange="1"/>	
+                    
+					<TextBlock Name="DownloadSize"
+							   Text="34Mb / 120 Mb"
+							   FontFamily="Consolas"
+                               FontSize="10"
+                               MaxWidth="150"
+                               MaxHeight="15"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"/>	
+				</Grid>
+				
+				<TextBlock Name="DownloadPercent"
+						   Text="80%"
+						   FontFamily="Consolas"
+						   Margin="10,0,0,0"/>
+			</StackPanel>
+		</StackPanel>
+	</Grid>
 </UserControl>

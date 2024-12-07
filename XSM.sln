@@ -4,8 +4,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.12.35521.163
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XiaomiSoftwareManager", "XiaomiSoftwareManager\XiaomiSoftwareManager.csproj", "{CAB80D28-965D-4417-A46D-8599AB7FA29B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6A9670DC-B925-4FE3-9D0D-657F5A83F7CA} = {6A9670DC-B925-4FE3-9D0D-657F5A83F7CA}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{B0249372-56D6-4D97-AAD1-0B30BAD26ABA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updater", "Updater\Updater.csproj", "{6A9670DC-B925-4FE3-9D0D-657F5A83F7CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +26,10 @@ Global
 		{B0249372-56D6-4D97-AAD1-0B30BAD26ABA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0249372-56D6-4D97-AAD1-0B30BAD26ABA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0249372-56D6-4D97-AAD1-0B30BAD26ABA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A9670DC-B925-4FE3-9D0D-657F5A83F7CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A9670DC-B925-4FE3-9D0D-657F5A83F7CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A9670DC-B925-4FE3-9D0D-657F5A83F7CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A9670DC-B925-4FE3-9D0D-657F5A83F7CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

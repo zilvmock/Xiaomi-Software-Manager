@@ -13,6 +13,8 @@ namespace XiaomiSoftwareManager.Dialogs
             YesNo = 2,
         }
 
+        public bool areButtonsDisabled { get; set; }
+
         public CustomDialog(UserControl content, string title = "Custom Dialog", DialogType dialogType = DialogType.OK)
         {
             InitializeComponent();
@@ -51,6 +53,22 @@ namespace XiaomiSoftwareManager.Dialogs
             SecondButton.Visibility = SecondButton.Visibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         }
 
+        public void ToggleButtonsEnabled()
+        {
+            FirstButton.IsEnabled = !FirstButton.IsEnabled;
+            SecondButton.IsEnabled = !SecondButton.IsEnabled;
+            areButtonsDisabled = !FirstButton.IsEnabled && !SecondButton.IsEnabled;
+        }
+
+        public void DisableCloseBehaviourFirstButton()
+        {
+            FirstButton.Click -= FirstButton_Click;
+        }
+
+        public void DisableCloseBehaviourSecondButton()
+        {
+            SecondButton.Click -= SecondButton_Click;
+        }
 
         private void FirstButton_Click(object sender, RoutedEventArgs e)
         {
