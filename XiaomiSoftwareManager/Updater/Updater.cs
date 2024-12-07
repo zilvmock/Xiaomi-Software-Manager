@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Windows;
 using XiaomiSoftwareManager.Models;
 
@@ -17,7 +17,6 @@ namespace XiaomiSoftwareManager
 
         private readonly string repoUrl = "https://api.github.com/repos/zilvmock/Xiaomi-Software-Manager/releases";
         private readonly string downloadFolder = Directory.GetCurrentDirectory();
-        private readonly string updateFolder = "update";
         private readonly string headerName = "XiaomiSoftwareManager";
 
         private DateTime startTime;
@@ -61,16 +60,14 @@ namespace XiaomiSoftwareManager
 
         public bool updateIsAvailable(string currentVersion, string latestVersion)
         {
-            // Helper to validate the version format
             bool IsValidVersionFormat(string version)
             {
                 string pattern = @"^v\d+\.\d+\.\d+(-[a-zA-Z0-9]+)?$";
-                return System.Text.RegularExpressions.Regex.IsMatch(version, pattern);
+                return Regex.IsMatch(version, pattern);
             }
 
             if (!IsValidVersionFormat(currentVersion) || !IsValidVersionFormat(latestVersion)) { return false; }
 
-            // Helper to parse version and prerelease
             (int major, int minor, int patch, string prerelease) ParseVersion(string version)
             {
                 version = version.TrimStart('v');
@@ -130,12 +127,7 @@ namespace XiaomiSoftwareManager
         {
             try
             {
-                // Ensure the download folder exists
-                if (!Directory.Exists(downloadFolder)) { return string.Empty; }
-
                 GitHubAsset zipAsset = release.Assets.First(x => x.ContentType == "application/zip");
-
-                // Get the file name from the URL (you may need to handle this dynamically)
                 string fileName = Path.Combine(downloadFolder, zipAsset.Name);
 
                 using (HttpClient client = new())
@@ -173,13 +165,7 @@ namespace XiaomiSoftwareManager
                     }
 
                     UpdateDownloadSpeed("-");
-
-                    // After download, extract the files and replace the existing ones
                     return fileName;
-                    //ExtractAndReplaceFiles(fileName);
-
-                    // Restart the application after the update
-                    //RestartApplication();
                 }
             }
             catch (Exception ex)
@@ -191,7 +177,6 @@ namespace XiaomiSoftwareManager
 
         private string FormatBytes(long bytes)
         {
-            // Helper method to format byte size (e.g. 1 KB, 2 MB)
             if (bytes < 1024) return $"{bytes} B";
             else if (bytes < 1048576) return $"{bytes / 1024.0:F2} KB";
             else return $"{bytes / 1048576.0:F2} MB";
@@ -211,7 +196,6 @@ namespace XiaomiSoftwareManager
 
         private string FormatSpeed(long totalBytes, long downloadedBytes, double progress)
         { 
-            // Helper method to calculate and format the download speed
             double elapsedTime = (DateTime.Now - startTime).TotalSeconds;
             double speed = downloadedBytes / elapsedTime;
             return FormatBytesPerSecond(speed);
