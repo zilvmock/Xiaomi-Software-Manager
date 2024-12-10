@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Net.Http;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -109,7 +110,7 @@ namespace XiaomiSoftwareManager
 
             Updater updater = new();
             // TODO: Prideti prie settingu ar gauti pre releases ar ne. Jei gauti: GetLatestReleaseAsync(true)
-            GitHubRelease? release = await updater.GetLatestReleaseAsync();
+            GitHubRelease? release = await updater.GetLatestReleaseAsync(new HttpClient());
             
             if (release == null) 
             {
@@ -118,7 +119,7 @@ namespace XiaomiSoftwareManager
                 return;
             }
 
-            if (updater.updateIsAvailable(appInfo.Version, release.TagName))
+            if (updater.UpdateIsAvailable(appInfo.Version, release.TagName))
             {
                 updaterControl.ShowResults("Update Available", $"{appInfo.Version} -> {release.TagName}\nDo you want update now?");
                 updateDialog.ChangeButtons(CustomDialog.DialogType.YesNo);
@@ -142,7 +143,14 @@ namespace XiaomiSoftwareManager
                     {
                         updaterControl.ShowResults("Installing", $"{appInfo.Version} -> {release.TagName}\nApplication will restart now...");
                         updaterControl.DownloadPanel.Visibility = Visibility.Collapsed;
-                        updater.InstallUpdate(filePath);
+                        try
+                        {
+                            updater.InstallUpdate(filePath);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show($"Error while attempting to update: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
                     }
                 };
             }

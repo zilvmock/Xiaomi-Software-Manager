@@ -4,8 +4,13 @@ using System.IO.Pipes;
 
 namespace Updater
 {
-    internal class Program
+    public class Program
     {
+        public static void CallMain(string[] args)
+        {
+            Main(args);
+        }
+
         static void Main(string[] args)
         {
             //if (!Debugger.IsAttached)
@@ -38,8 +43,6 @@ namespace Updater
 
                 if (Directory.Exists(extractionPath))
                     Directory.Delete(extractionPath, true);
-
-                ZipFile.ExtractToDirectory(updateZipPath, extractionPath);
 
                 Console.WriteLine("# Checking if application is closed...");
 
@@ -88,7 +91,10 @@ namespace Updater
                 catch (ArgumentException) { Console.WriteLine("# Main application process not found. Continuing..."); }
 
                 Console.WriteLine("# Updating...");
+                
+                ZipFile.ExtractToDirectory(updateZipPath, extractionPath);
                 string[] extractedFiles = Directory.GetFiles(extractionPath, "*", SearchOption.AllDirectories);
+                
                 foreach (string file in extractedFiles)
                 {
                     string destFile = Path.Combine(executableDirectory, Path.GetFileName(file));
@@ -107,7 +113,10 @@ namespace Updater
             catch (Exception ex)
             {
                 Console.WriteLine($"[ERROR] Error during update. Reason:\n{ex.Message}");
-                Console.ReadLine();
+                //Console.ReadLine();
+                //TODO: i loga issaugoti fail, nestabdyti cia.
+                //laikinai:
+                Thread.Sleep(3000);
                 return;
             }
             finally

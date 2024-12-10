@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -8,7 +9,7 @@ using XiaomiSoftwareManager.Models;
 
 namespace XiaomiSoftwareManager
 {
-    internal class Updater
+    public class Updater
     {        
         public event Action<string>? DownloadSpeedChanged;
         public event Action<string>? DownloadSizeChanged;
@@ -22,14 +23,14 @@ namespace XiaomiSoftwareManager
         private DateTime startTime;
 
 
-        public async Task<GitHubRelease?> GetLatestReleaseAsync(bool checkForLatestPreRelease = false)
+        public async Task<GitHubRelease?> GetLatestReleaseAsync(HttpClient httpClient, bool checkForLatestPreRelease = false)
         {
-            return await GetReleaseAsync(checkForLatestPreRelease);
+            return await GetReleaseAsync(httpClient, checkForLatestPreRelease);
         }
 
-        private async Task<GitHubRelease?> GetReleaseAsync(bool checkForLatestPreRelease = false)
+        private async Task<GitHubRelease?> GetReleaseAsync(HttpClient client = null!, bool checkForLatestPreRelease = false)
         {
-            using HttpClient client = new();
+            client ??= new HttpClient();
             client.DefaultRequestHeaders.Add("User-Agent", headerName);
 
             try
@@ -40,7 +41,7 @@ namespace XiaomiSoftwareManager
                 List<GitHubRelease> releases = JsonConvert.DeserializeObject<List<GitHubRelease>>(json) ??
                     throw new InvalidOperationException("Failed to deserialize the release or the release data is missing.");
                 GitHubRelease? release = null;
-                
+
                 if (checkForLatestPreRelease)
                 {
                     release = releases.OrderByDescending(r => r.CreatedAt).Where(r => r.Prerelease).FirstOrDefault();
@@ -58,7 +59,7 @@ namespace XiaomiSoftwareManager
             }
         }
 
-        public bool updateIsAvailable(string currentVersion, string latestVersion)
+        public bool UpdateIsAvailable(string currentVersion, string latestVersion)
         {
             bool IsValidVersionFormat(string version)
             {
@@ -74,10 +75,10 @@ namespace XiaomiSoftwareManager
                 string[] parts = version.Split('-');
                 string[] numbers = parts[0].Split('.');
 
-                int major = int.Parse(numbers[0]);
-                int minor = int.Parse(numbers[1]);
-                int patch = int.Parse(numbers[2]);
-                string prerelease = parts.Length > 1 ? parts[1] : null;
+                int major = int.Parse(numbers[0])!;
+                int minor = int.Parse(numbers[1])!;
+                int patch = int.Parse(numbers[2])!;
+                string prerelease = parts.Length > 1 ? parts[1] : null!;
 
                 return (major, minor, patch, prerelease);
             }
@@ -123,14 +124,14 @@ namespace XiaomiSoftwareManager
             DownloadSizeChanged?.Invoke(status);
         }
 
-        public async Task<string> DownloadUpdateAsync(GitHubRelease release)
+        public async Task<string> DownloadUpdateAsync(GitHubRelease release, HttpClient client = null!)
         {
             try
             {
                 GitHubAsset zipAsset = release.Assets.First(x => x.ContentType == "application/zip");
                 string fileName = Path.Combine(downloadFolder, zipAsset.Name);
 
-                using (HttpClient client = new())
+                using (client ??= new HttpClient())
                 {
                     client.DefaultRequestHeaders.Add("User-Agent", headerName);
 
@@ -177,21 +178,25 @@ namespace XiaomiSoftwareManager
 
         private string FormatBytes(long bytes)
         {
+            var culture = CultureInfo.InvariantCulture;
+
             if (bytes < 1024) return $"{bytes} B";
-            else if (bytes < 1048576) return $"{bytes / 1024.0:F2} KB";
-            else return $"{bytes / 1048576.0:F2} MB";
+            else if (bytes < 1048576) return $"{(bytes / 1024.0).ToString("F2", culture)} KB";
+            else return $"{(bytes / 1048576.0).ToString("F2", culture)} MB";
         }
 
         private string FormatBytesPerSecond(double speed)
         {
+            var culture = CultureInfo.InvariantCulture;
+
             if (speed < 1024)
-                return $"{speed:F2} B/s";
+                return $"{speed.ToString("F2", culture)} B/s";
             else if (speed < 1048576)
-                return $"{speed / 1024.0:F2} KB/s";
+                return $"{(speed / 1024.0).ToString("F2", culture)} KB/s";
             else if (speed < 1073741824)
-                return $"{speed / 1048576.0:F2} MB/s";
+                return $"{(speed / 1048576.0).ToString("F2", culture)} MB/s";
             else
-                return $"{speed / 1073741824.0:F2} GB/s";
+                return $"{(speed / 1073741824.0).ToString("F2", culture)} GB/s";
         }
 
         private string FormatSpeed(long totalBytes, long downloadedBytes, double progress)
@@ -203,32 +208,25 @@ namespace XiaomiSoftwareManager
 
         public void InstallUpdate(string zipFilePath)
         {
-            try
+            string updaterPath = Path.Combine(downloadFolder, "Updater.exe");
+
+            if (!File.Exists(updaterPath))
+                throw new FileNotFoundException("Updater application is missing.");
+
+            int processId = Environment.ProcessId;
+            string processName = Process.GetCurrentProcess().ProcessName;
+            string executablePath = Environment.ProcessPath!;
+
+            string arguments = $"\"{processId}\" \"{processName}\" \"{executablePath}\" \"{zipFilePath}\"";
+
+            Process.Start(new ProcessStartInfo
             {
-                string updaterPath = Path.Combine(downloadFolder, "Updater.exe");
+                FileName = updaterPath,
+                Arguments = arguments,
+                UseShellExecute = true,
+            });
 
-                if (!File.Exists(updaterPath))
-                    throw new FileNotFoundException("Updater application is missing.");
-
-                int processId = Environment.ProcessId;
-                string processName = Process.GetCurrentProcess().ProcessName;
-                string executablePath = Environment.ProcessPath!;
-
-                string arguments = $"\"{processId}\" \"{processName}\" \"{executablePath}\" \"{zipFilePath}\"";
-
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = updaterPath,
-                    Arguments = arguments,
-                    UseShellExecute = true,
-                });
-
-                Application.Current.Shutdown();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error while attempting to update: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            Application.Current.Shutdown();
         }
     }
 }
