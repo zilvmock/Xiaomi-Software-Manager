@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XiaomiSoftwareManager", "Xi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{B0249372-56D6-4D97-AAD1-0B30BAD26ABA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updater", "Updater\Updater.csproj", "{6A9670DC-B925-4FE3-9D0D-657F5A83F7CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdaterApp", "Updater\UpdaterApp.csproj", "{6A9670DC-B925-4FE3-9D0D-657F5A83F7CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
