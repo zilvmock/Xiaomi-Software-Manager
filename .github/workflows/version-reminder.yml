@@ -1,0 +1,14 @@
+name: Version Check Reminder
+
+on:
+  pull_request:
+    branches:
+      - main
+      - stable
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify to Verify Version
+        run: echo "Ensure the application version is correct before merging this PR!"

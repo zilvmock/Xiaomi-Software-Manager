@@ -1,0 +1,60 @@
+name: Deploy a Pre-release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+\.[0-9]+\.[0-9]+-*'  # Matches v1.0.0-beta, v1.0.0-alpha, etc.
+
+env:
+  SOLUTION_PATH: XSM.sln
+  PROJECT_PATH: ./XiaomiSoftwareManager/XiaomiSoftwareManager.csproj
+  PROJECT_NAME: XiaomiSoftwareManager
+
+jobs:
+  deploy-a-prerelease:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+    
+    - name: Restore NuGet Packages
+      run: dotnet restore ${{ env.SOLUTION_PATH }}
+    
+    - name: Run Tests
+      run: |
+        dotnet test ${{ env.SOLUTION_PATH }} --logger "console;verbosity=detailed" --verbosity normal
+    
+    - name: Publish WPF Project
+      run: |
+        dotnet publish ${{ env.PROJECT_PATH }} `
+          -c Release `
+          -r win-x64 `
+          --self-contained true `
+          /p:PublishSingleFile=true `
+          /p:DebugType=None `
+          /p:DebugSymbols=false `
+          /p:PublishDir="${{ github.workspace }}/publish"
+      timeout-minutes: 3
+    
+    - name: Zip Publish Folder
+      run: |
+        $version = "${{ github.ref_name }}" -replace '^v', ''
+        Compress-Archive -Path "${{ github.workspace }}/publish/*" -DestinationPath "${{ github.workspace }}/xiaomi-software-manager-$version.zip"
+    
+    - name: Create Pre-Release
+      uses: softprops/action-gh-release@v2
+      with:
+        name: xiaomi-software-manager/${{ github.ref_name }}
+        files: |
+          ${{ github.workspace }}/xiaomi-software-manager-*.zip
+        prerelease: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
