@@ -1,6 +1,5 @@
 ﻿{
   "title": "Xiaomi Software Manager",
-  // CHANGE THIS BEFORE PUSHING, LOWERED VERSION FOR TESTING!!!!!!!!!!
-  "version": "v0.0.9",
+  "version": "v0.2.0",
   "author": "Žilvinas Mockus"
 }
