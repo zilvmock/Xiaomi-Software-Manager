@@ -10,10 +10,12 @@
 
   <ItemGroup>
     <None Remove="info.json" />
+    <None Remove="Themes\logo.txt" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="info.json" />
+    <EmbeddedResource Include="Themes\logo.txt" />
   </ItemGroup>
   
   <ItemGroup>
