@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xsm", "Xiaomi Software Mana
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xsm.tests", "Tests\xsm.tests.csproj", "{602F4855-14C0-4387-8806-29D2D060BBD5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xsm.updater", "Updater\\xsm.updater.csproj", "{4D633ECE-A628-44CE-AC5A-45C37343C47D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{602F4855-14C0-4387-8806-29D2D060BBD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{602F4855-14C0-4387-8806-29D2D060BBD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{602F4855-14C0-4387-8806-29D2D060BBD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D633ECE-A628-44CE-AC5A-45C37343C47D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D633ECE-A628-44CE-AC5A-45C37343C47D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D633ECE-A628-44CE-AC5A-45C37343C47D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D633ECE-A628-44CE-AC5A-45C37343C47D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

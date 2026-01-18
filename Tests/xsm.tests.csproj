@@ -20,5 +20,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Xiaomi Software Manager\xsm.csproj" />
+		<ProjectReference Include="..\Updater\xsm.updater.csproj" />
 	</ItemGroup>
 </Project>

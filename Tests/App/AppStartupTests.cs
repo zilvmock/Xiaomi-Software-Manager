@@ -9,7 +9,7 @@ using xsm.Logic;
 using xsm.UI.Views.Windows;
 using xsm.ViewModels.Windows;
 
-namespace xsm.Tests;
+namespace xsm.tests.app;
 
 public sealed class AppStartupTests
 {

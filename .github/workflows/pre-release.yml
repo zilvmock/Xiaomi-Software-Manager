@@ -1,0 +1,88 @@
+name: Deploy Pre-release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Pre-release version (e.g., 1.2.0-beta.1)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  SOLUTION_PATH: Xiaomi Software Manager.sln
+  APP_PROJECT_PATH: Xiaomi Software Manager/xsm.csproj
+  UPDATER_PROJECT_PATH: Updater/xsm.updater.csproj
+
+jobs:
+  prerelease:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore NuGet packages
+        run: dotnet restore "${{ env.SOLUTION_PATH }}"
+
+      - name: Run tests
+        run: dotnet test "${{ env.SOLUTION_PATH }}" --logger "console;verbosity=detailed" --verbosity normal
+
+      - name: Publish app
+        run: |
+          dotnet publish "${{ env.APP_PROJECT_PATH }}" -c Release -r win-x64 --self-contained true `
+            /p:Version="${{ inputs.version }}" `
+            /p:InformationalVersion="${{ inputs.version }}" `
+            /p:PublishSingleFile=true `
+            /p:IncludeNativeLibrariesForSelfExtract=true `
+            /p:EnableCompressionInSingleFile=true `
+            /p:PublishReadyToRun=false `
+            /p:DebugType=None `
+            /p:DebugSymbols=false `
+            /p:PublishDir="${{ github.workspace }}/publish/app"
+
+      - name: Publish updater
+        run: |
+          dotnet publish "${{ env.UPDATER_PROJECT_PATH }}" -c Release -r win-x64 --self-contained true `
+            /p:Version="${{ inputs.version }}" `
+            /p:InformationalVersion="${{ inputs.version }}" `
+            /p:PublishSingleFile=true `
+            /p:IncludeNativeLibrariesForSelfExtract=true `
+            /p:EnableCompressionInSingleFile=true `
+            /p:PublishReadyToRun=false `
+            /p:DebugType=None `
+            /p:DebugSymbols=false `
+            /p:PublishDir="${{ github.workspace }}/publish/updater"
+
+      - name: Bundle updater into app
+        shell: pwsh
+        run: |
+          Copy-Item "${{ github.workspace }}/publish/updater/xsm.updater.exe" `
+            "${{ github.workspace }}/publish/app/xsm.updater.exe" -Force
+
+      - name: Create zip
+        shell: pwsh
+        run: |
+          $version = "${{ inputs.version }}"
+          $zipName = "xsm-win-x64-$version.zip"
+          Compress-Archive -Path "${{ github.workspace }}/publish/app/*" -DestinationPath "${{ github.workspace }}/$zipName"
+
+      - name: Create pre-release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ inputs.version }}
+          name: xsm/v${{ inputs.version }}
+          target_commitish: ${{ github.sha }}
+          prerelease: true
+          files: |
+            ${{ github.workspace }}/xsm-win-x64-${{ inputs.version }}.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

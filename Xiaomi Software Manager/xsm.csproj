@@ -7,6 +7,7 @@
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
         <IsPackable>false</IsPackable>
 		<Version>1.0.0</Version>
+		<InformationalVersion>$(Version)</InformationalVersion>
     </PropertyGroup>
 
     <ItemGroup>

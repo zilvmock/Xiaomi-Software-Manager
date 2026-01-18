@@ -28,6 +28,7 @@ using xsm.Logic.Helpers;
 using xsm.Logic.LocalSoftware;
 using xsm.Logic.Mirrors;
 using xsm.Logic.Scraper;
+using xsm.Logic.Updates;
 using xsm.Models;
 using xsm.UI.Views.Dialogs;
 using xsm.ViewModels;
@@ -42,6 +43,7 @@ public partial class MainWindow : Window
 	private bool _allowClose;
 	private CancellationTokenSource? _localFolderSizeCts;
 	private DownloadManagerWindow? _downloadManagerWindow;
+	private readonly UpdateManager _updateManager = new();
 	private const string SoftwareGridStateKey = "software.grid.state";
 	private static readonly JsonSerializerOptions GridStateSerializerOptions = new()
 	{
@@ -216,6 +218,108 @@ public partial class MainWindow : Window
 		{
 			_suppressGridStateSave = false;
 			_pendingGridState = null;
+		}
+	}
+
+	private async void CheckForUpdates_OnClick(object? sender, RoutedEventArgs e)
+	{
+		if (ViewModel.IsCheckingForUpdates)
+		{
+			return;
+		}
+
+		if (DownloadManagerService.Instance.ViewModel.HasActiveDownloads)
+		{
+			ViewModel.UpdateStatusMessage = "Stop active downloads before updating.";
+			return;
+		}
+
+		ViewModel.IsCheckingForUpdates = true;
+		ViewModel.UpdateStatusMessage = "Checking for updates...";
+
+		try
+		{
+			var result = await _updateManager.CheckForUpdatesAsync(
+				ViewModel.AppVersion,
+				ViewModel.IncludePrereleaseUpdates);
+
+			ViewModel.UpdateStatusMessage = result.StatusMessage;
+			if (!result.IsUpdateAvailable || result.Asset == null || result.LatestVersion == null)
+			{
+				return;
+			}
+
+			ViewModel.UpdateStatusMessage = $"Downloading {result.LatestVersion}...";
+			var zipPath = await _updateManager.DownloadAssetAsync(result.Asset, AppContext.BaseDirectory);
+			if (string.IsNullOrWhiteSpace(zipPath))
+			{
+				ViewModel.UpdateStatusMessage = "Failed to download the update package.";
+				return;
+			}
+
+			var executablePath = Environment.ProcessPath;
+			if (string.IsNullOrWhiteSpace(executablePath))
+			{
+				ViewModel.UpdateStatusMessage = "Executable path is unavailable.";
+				return;
+			}
+
+			var updaterPath = Path.Combine(AppContext.BaseDirectory, UpdateManager.UpdaterExeName);
+			if (!File.Exists(updaterPath))
+			{
+				ViewModel.UpdateStatusMessage = "Updater is missing in the application folder.";
+				return;
+			}
+
+			if (!_updateManager.TryLaunchUpdater(
+				updaterPath,
+				Environment.ProcessId,
+				executablePath,
+				zipPath,
+				out var error))
+			{
+				ViewModel.UpdateStatusMessage = $"Failed to start updater: {error}";
+				return;
+			}
+
+			await ShutdownForUpdateAsync();
+		}
+		catch (Exception ex)
+		{
+			Logger.Instance.LogException(ex, "Update check failed.", LogLevel.Error);
+			ViewModel.UpdateStatusMessage = "Update check failed.";
+		}
+		finally
+		{
+			ViewModel.IsCheckingForUpdates = false;
+		}
+	}
+
+	private async Task ShutdownForUpdateAsync()
+	{
+		try
+		{
+			await AppLifecycle.Instance.ShutdownAsync(TimeSpan.FromSeconds(5));
+		}
+		catch (Exception ex)
+		{
+			Logger.Instance.LogException(ex, "Shutdown failed before update.", LogLevel.Error);
+		}
+		finally
+		{
+			if (ViewModel is IDisposable disposable)
+			{
+				disposable.Dispose();
+			}
+
+			if (_downloadManagerWindow != null)
+			{
+				_downloadManagerWindow.AllowClose();
+				_downloadManagerWindow.Close();
+			}
+
+			_allowClose = true;
+			Close();
 		}
 	}
 

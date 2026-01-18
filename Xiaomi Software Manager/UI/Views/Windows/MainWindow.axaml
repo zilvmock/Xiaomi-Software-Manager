@@ -482,12 +482,29 @@
 										FontSize="48"
 										FontWeight="Bold"
 										HorizontalAlignment="Center" />
-									<TextBlock Text="{Binding AppVersion, StringFormat=Version {0}}"
+									<TextBlock Text="{Binding AppVersionDisplay, StringFormat=Version {0}}"
 										FontSize="12"
 										Foreground="#6B7280"
 										HorizontalAlignment="Center" />
+									<TextBlock Text="{Binding AppBuildMetadata, StringFormat=Build (Commit) {0}}"
+										IsVisible="{Binding HasAppBuildMetadata}"
+										FontSize="11"
+										Foreground="#94A3B8"
+										HorizontalAlignment="Center" />
+									<CheckBox Content="Include prerelease builds"
+										IsChecked="{Binding IncludePrereleaseUpdates}"
+										IsEnabled="{Binding CanCheckForUpdates}"
+										HorizontalAlignment="Center" />
 									<Button Content="Check for updates"
 										Width="180"
+										IsEnabled="{Binding CanCheckForUpdates}"
+										Click="CheckForUpdates_OnClick"
+										HorizontalAlignment="Center" />
+									<TextBlock Text="{Binding UpdateStatusMessage}"
+										FontSize="12"
+										TextAlignment="Center"
+										TextWrapping="Wrap"
+										Foreground="#6B7280"
 										HorizontalAlignment="Center" />
 								</StackPanel>
 							</Border>

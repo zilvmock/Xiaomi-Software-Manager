@@ -2,10 +2,18 @@
 /*
 !/.gitignore
 !/*.sln
+!/.github/
+!/.github/**
 !/Xiaomi Software Manager/
 !/Xiaomi Software Manager/**
 !/Tests/
 !/Tests/**
+!/Tests/App/
+!/Tests/App/**
+!/Tests/Updater/
+!/Tests/Updater/**
+!/Updater/
+!/Updater/**
 !/Xiaomi Software Manager/.docs/
 !/Xiaomi Software Manager/.docs/**
 

@@ -25,6 +25,9 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
 	private int _selectedSoftwareCount;
 	private bool _isInitializing = true;
 	private string _loadingMessage = "Loading...";
+	private bool _includePrereleaseUpdates;
+	private bool _isCheckingForUpdates;
+	private string _updateStatusMessage = string.Empty;
 	private readonly List<SoftwareRowViewModel> _allSoftwareItems = new();
 	private string _searchText = string.Empty;
 	private string _appliedSearchText = string.Empty;
@@ -118,6 +121,32 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
 		}
 	}
 
+	public bool IncludePrereleaseUpdates
+	{
+		get => _includePrereleaseUpdates;
+		set => SetProperty(ref _includePrereleaseUpdates, value);
+	}
+
+	public bool IsCheckingForUpdates
+	{
+		get => _isCheckingForUpdates;
+		set
+		{
+			if (SetProperty(ref _isCheckingForUpdates, value))
+			{
+				OnPropertyChanged(nameof(CanCheckForUpdates));
+			}
+		}
+	}
+
+	public bool CanCheckForUpdates => !IsCheckingForUpdates;
+
+	public string UpdateStatusMessage
+	{
+		get => _updateStatusMessage;
+		set => SetProperty(ref _updateStatusMessage, value);
+	}
+
 	public bool IsInitializing
 	{
 		get => _isInitializing;
@@ -162,6 +191,12 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
 	public string LocalFolderSizeText { get; set; } = "--";
 
 	public string AppVersion { get; } = ResolveAppVersion();
+
+	public string AppVersionDisplay => GetVersionDisplay(AppVersion);
+
+	public string AppBuildMetadata => GetBuildMetadata(AppVersion);
+
+	public bool HasAppBuildMetadata => !string.IsNullOrWhiteSpace(AppBuildMetadata);
 
 	public string SearchText
 	{
@@ -693,6 +728,33 @@ public sealed class MainWindowViewModel : INotifyPropertyChanged, IDisposable
 
 		var version = assembly.GetName().Version?.ToString();
 		return string.IsNullOrWhiteSpace(version) ? "Unknown" : version;
+	}
+
+	private static string GetVersionDisplay(string version)
+	{
+		if (string.IsNullOrWhiteSpace(version))
+		{
+			return "Unknown";
+		}
+
+		var plusIndex = version.IndexOf('+');
+		return plusIndex > 0 ? version[..plusIndex] : version;
+	}
+
+	private static string GetBuildMetadata(string version)
+	{
+		if (string.IsNullOrWhiteSpace(version))
+		{
+			return string.Empty;
+		}
+
+		var plusIndex = version.IndexOf('+');
+		if (plusIndex < 0 || plusIndex >= version.Length - 1)
+		{
+			return string.Empty;
+		}
+
+		return version[(plusIndex + 1)..];
 	}
 
 	private void UpdateFilterSummary()

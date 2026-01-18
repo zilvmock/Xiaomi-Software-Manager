@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using xsm.Data;
 
-namespace xsm.Tests;
+namespace xsm.tests.app;
 
 public sealed class DatabaseTests
 {

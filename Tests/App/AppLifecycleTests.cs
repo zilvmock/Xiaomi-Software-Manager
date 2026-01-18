@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using xsm.Logic;
 
-namespace xsm.Tests;
+namespace xsm.tests.app;
 
 [NonParallelizable]
 public sealed class AppLifecycleTests

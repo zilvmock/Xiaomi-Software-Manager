@@ -3,9 +3,9 @@ using Avalonia;
 using Avalonia.Headless;
 using xsm;
 
-[assembly: AvaloniaTestApplication(typeof(xsm.Tests.TestAppBuilder))]
+[assembly: AvaloniaTestApplication(typeof(xsm.tests.app.TestAppBuilder))]
 
-namespace xsm.Tests;
+namespace xsm.tests.app;
 
 public static class TestAppBuilder
 {
