@@ -1,0 +1,77 @@
+<Window xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:vm="clr-namespace:xsm.ViewModels.Dialogs"
+	mc:Ignorable="d" d:DesignWidth="980" d:DesignHeight="600"
+	x:Class="xsm.UI.Views.Dialogs.ScrapeIssuesDialog"
+	x:DataType="vm:ScrapeIssuesViewModel"
+	Title="Scrape Issues"
+	WindowStartupLocation="CenterOwner">
+	<Grid RowDefinitions="*,Auto"
+		ColumnDefinitions="2*,3*"
+		RowSpacing="12"
+		ColumnSpacing="12"
+		Margin="12">
+		<Border Grid.Row="0"
+			Grid.Column="0"
+			Padding="8"
+			CornerRadius="6"
+			BorderThickness="1"
+			BorderBrush="#D0D5DD">
+			<DataGrid ItemsSource="{Binding Issues}"
+				SelectedItem="{Binding SelectedIssue}"
+				AutoGenerateColumns="False"
+				HeadersVisibility="Column">
+				<DataGrid.Columns>
+					<DataGridTextColumn Header="Reason" Binding="{Binding Reason}" Width="*" />
+					<DataGridTextColumn Header="Link Text" Binding="{Binding LinkText}" Width="2*" />
+				</DataGrid.Columns>
+			</DataGrid>
+		</Border>
+
+		<Border Grid.Row="0"
+			Grid.Column="1"
+			Padding="8"
+			CornerRadius="6"
+			BorderThickness="1"
+			BorderBrush="#D0D5DD">
+			<ScrollViewer>
+				<StackPanel Spacing="8">
+					<TextBlock Text="Details" FontWeight="SemiBold" />
+
+					<TextBlock Text="Reason" FontSize="12" Foreground="#6B7280" />
+					<TextBox Text="{Binding SelectedIssue.Reason, TargetNullValue=''}"
+						IsReadOnly="True"
+						TextWrapping="Wrap" />
+
+					<TextBlock Text="Link Text" FontSize="12" Foreground="#6B7280" />
+					<TextBox Text="{Binding SelectedIssue.LinkText, TargetNullValue=''}"
+						IsReadOnly="True"
+						TextWrapping="Wrap" />
+
+					<TextBlock Text="Download Link" FontSize="12" Foreground="#6B7280" />
+					<TextBox Text="{Binding SelectedIssue.LinkHref, TargetNullValue=''}"
+						IsReadOnly="True"
+						TextWrapping="Wrap" />
+
+					<TextBlock Text="HTML" FontSize="12" Foreground="#6B7280" />
+					<TextBox Text="{Binding SelectedIssue.Html, TargetNullValue=''}"
+						IsReadOnly="True"
+						TextWrapping="Wrap"
+						AcceptsReturn="True" />
+				</StackPanel>
+			</ScrollViewer>
+		</Border>
+
+		<StackPanel Grid.Row="1"
+			Grid.Column="0"
+			Grid.ColumnSpan="2"
+			Orientation="Horizontal"
+			HorizontalAlignment="Right"
+			Spacing="8">
+			<Button Content="Save Report" Click="SaveReport_OnClick" />
+			<Button Content="Close" Click="Close_OnClick" />
+		</StackPanel>
+	</Grid>
+</Window>

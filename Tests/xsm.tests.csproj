@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<IsPackable>false</IsPackable>
+		<Nullable>enable</Nullable>
+		<AssemblyName>xsm.tests</AssemblyName>
+		<RootNamespace>xsm.tests</RootNamespace>
+		<PackageId>xsm.tests</PackageId>
+		<Authors>xsm.tests</Authors>
+		<Company>xsm.tests</Company>
+		<Product>xsm.tests</Product>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia.Headless.NUnit" Version="11.3.10" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+		<PackageReference Include="NUnit" Version="4.2.2" />
+		<PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Xiaomi Software Manager\xsm.csproj" />
+	</ItemGroup>
+</Project>

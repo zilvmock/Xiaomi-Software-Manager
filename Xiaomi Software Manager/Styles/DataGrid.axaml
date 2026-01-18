@@ -1,0 +1,120 @@
+<Styles xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:converters="clr-namespace:xsm.Converters"
+	x:CompileBindings="False">
+	<Styles.Resources>
+		<converters:ContrastBrushConverter x:Key="ContrastBrushConverter" />
+		<converters:TintBrushConverter x:Key="TintBrushConverter" />
+	</Styles.Resources>
+	<Style Selector="DataGrid.xsm-grid">
+		<Setter Property="ColumnHeaderHeight" Value="36" />
+		<Style.Resources>
+			<SolidColorBrush x:Key="DataGridCellFocusVisualPrimaryBrush"
+				Color="Transparent" />
+			<SolidColorBrush x:Key="DataGridCellFocusVisualSecondaryBrush"
+				Color="Transparent" />
+		</Style.Resources>
+	</Style>
+
+	<Style Selector="DataGrid.xsm-grid DataGridColumnHeader">
+		<Setter Property="FontSize" Value="13" />
+		<Setter Property="FontWeight" Value="SemiBold" />
+		<Setter Property="Padding" Value="10,6" />
+		<Setter Property="VerticalContentAlignment" Value="Center" />
+		<Setter Property="BorderThickness" Value="0,0,1,1" />
+	</Style>
+
+	<Style Selector="DataGrid.xsm-grid-striped DataGridRow:nth-child(odd)">
+		<Setter Property="Background" Value="#FFFFFF" />
+	</Style>
+	<Style Selector="DataGrid.xsm-grid-striped DataGridRow:nth-child(even)">
+		<Setter Property="Background" Value="#F9FAFB" />
+	</Style>
+
+	<Style Selector="DataGrid.xsm-grid DataGridRow:selected">
+		<Setter Property="Background"
+			Value="{Binding Source={StaticResource SystemControlHighlightAccentBrush}, Converter={StaticResource TintBrushConverter}, ConverterParameter=0.6}" />
+		<Setter Property="BorderBrush"
+			Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
+		<Setter Property="BorderThickness" Value="1" />
+		<Setter Property="Foreground"
+			Value="{Binding Background, RelativeSource={RelativeSource Self}, Converter={StaticResource ContrastBrushConverter}}" />
+		<Setter Property="ClipToBounds" Value="True" />
+	</Style>
+	<Style Selector="DataGrid.xsm-grid DataGridRow:selected:pointerover">
+		<Setter Property="Background"
+			Value="{Binding Source={StaticResource SystemControlHighlightAccentBrush}, Converter={StaticResource TintBrushConverter}, ConverterParameter=0.6}" />
+		<Setter Property="BorderBrush"
+			Value="{DynamicResource SystemControlHighlightAltBaseHighBrush}" />
+		<Setter Property="BorderThickness" Value="1" />
+		<Setter Property="Foreground"
+			Value="{Binding Background, RelativeSource={RelativeSource Self}, Converter={StaticResource ContrastBrushConverter}}" />
+	</Style>
+	<Style Selector="DataGrid.xsm-grid DataGridRow:pointerover">
+		<Setter Property="Background" Value="Transparent" />
+	</Style>
+	<Style Selector="DataGrid.xsm-grid DataGridRow:current">
+		<Setter Property="Background" Value="Transparent" />
+	</Style>
+
+	<Style Selector="DataGrid.xsm-grid DataGridCell:selected">
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="BorderBrush" Value="Transparent" />
+		<Setter Property="BorderThickness" Value="0" />
+		<Setter Property="Foreground"
+			Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}" />
+	</Style>
+	<Style Selector="DataGrid.xsm-grid DataGridCell:selected:pointerover">
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="BorderBrush" Value="Transparent" />
+		<Setter Property="BorderThickness" Value="0" />
+		<Setter Property="Foreground"
+			Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}" />
+	</Style>
+	<Style Selector="DataGrid.xsm-grid DataGridCell:pointerover">
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="Foreground"
+			Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}" />
+	</Style>
+	<Style Selector="DataGrid.xsm-grid DataGridRow:selected DataGridCell:pointerover">
+		<Setter Property="Foreground"
+			Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}" />
+	</Style>
+	<Style Selector="DataGrid.xsm-grid DataGridCell:current">
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="BorderBrush" Value="Transparent" />
+		<Setter Property="BorderThickness" Value="0" />
+	</Style>
+
+	<Style Selector="DataGrid.xsm-grid TextBlock.xsm-grid-muted">
+		<Setter Property="Foreground" Value="#6B7280" />
+	</Style>
+	<Style Selector="DataGrid.xsm-grid DataGridRow:selected TextBlock.xsm-grid-muted">
+		<Setter Property="Foreground"
+			Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}" />
+	</Style>
+
+	<Style Selector="DataGrid.xsm-grid TextBlock.xsm-grid-status">
+		<Setter Property="Foreground" Value="{Binding StatusColor}" />
+	</Style>
+	<Style Selector="DataGrid.xsm-grid DataGridRow:selected TextBlock.xsm-grid-status">
+		<Setter Property="Foreground"
+			Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}" />
+	</Style>
+
+	<Style Selector="DataGrid.xsm-grid TextBlock.xsm-grid-web-version">
+		<Setter Property="Foreground" Value="{Binding WebVersionColor}" />
+	</Style>
+	<Style Selector="DataGrid.xsm-grid DataGridRow:selected TextBlock.xsm-grid-web-version">
+		<Setter Property="Foreground"
+			Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}" />
+	</Style>
+
+	<Style Selector="DataGrid.xsm-grid TextBlock.xsm-grid-local-version">
+		<Setter Property="Foreground" Value="{Binding LocalVersionColor}" />
+	</Style>
+	<Style Selector="DataGrid.xsm-grid DataGridRow:selected TextBlock.xsm-grid-local-version">
+		<Setter Property="Foreground"
+			Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=DataGridRow}}" />
+	</Style>
+</Styles>

@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:xsm.Controls"
+             xmlns:models="clr-namespace:xsm.Models"
+             x:Class="xsm.Controls.LogConsole"
+             x:Name="Root">
+    <UserControl.Styles>
+        <Style Selector="TreeViewItem:pointerover:not(:selected)">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="TreeViewItem:pointerover:not(:selected) /template/ Border">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="TreeViewItem:selected">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="TreeViewItem:selected /template/ Border">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        <Style Selector="TreeViewItem:pointerover /template/ Border">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+    </UserControl.Styles>
+    <Border Padding="8"
+            BorderThickness="1"
+            BorderBrush="#D0D5DD"
+            Background="#FFFFFF"
+            CornerRadius="6">
+        <TreeView x:Name="LogTree"
+                  ItemsSource="{Binding Items, ElementName=Root}"
+                  Background="Transparent"
+                  FontFamily="Cascadia Mono, Consolas, Courier New, monospace"
+                  FontSize="12">
+            <TreeView.ItemTemplate>
+                <TreeDataTemplate x:DataType="models:LogEntry" ItemsSource="{Binding Details}">
+                    <SelectableTextBlock TextWrapping="Wrap">
+                        <SelectableTextBlock.Inlines>
+                            <Run Text="{Binding TimestampText}"
+                                 Foreground="#6B7280" />
+                            <Run Text="{Binding LevelText}"
+                                 Foreground="{Binding LevelColor}"
+                                 FontWeight="SemiBold" />
+                            <Run Text=" " />
+                            <Run Text="{Binding Message}" />
+                            <Run Text="{Binding DescriptionSuffix}"
+                                 Foreground="#6B7280"
+                                 FontStyle="Italic" />
+                        </SelectableTextBlock.Inlines>
+                    </SelectableTextBlock>
+                </TreeDataTemplate>
+            </TreeView.ItemTemplate>
+        </TreeView>
+    </Border>
+</UserControl>

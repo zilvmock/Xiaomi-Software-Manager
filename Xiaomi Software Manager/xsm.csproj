@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net9.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <IsPackable>false</IsPackable>
+		<Version>1.0.0</Version>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="11.3.10" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.3.10" />
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.3.10" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.10" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.10" />
+        <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.1.1" />
+        <PackageReference Include="FluentIcons.Avalonia" Version="2.0.316.1" />
+        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+        <PackageReference Include="Avalonia.Diagnostics" Version="11.3.10">
+            <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+            <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Fastenshtein" Version="1.0.11" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Selenium.WebDriver" Version="4.27.0" />
+        <PackageReference Include="Selenium.Support" Version="4.27.0" />
+        <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="Data/Seeds/download-domains.json" CopyToOutputDirectory="PreserveNewest" />
+    </ItemGroup>
+
+  <ItemGroup>
+      <Compile Update="UI/Views/Dialogs/ConfirmCloseDialog.axaml.cs">
+        <DependentUpon>ConfirmCloseDialog.axaml</DependentUpon>
+      </Compile>
+      <Compile Update="Controls\TaskButton.axaml.cs">
+        <DependentUpon>TaskButton.axaml</DependentUpon>
+      </Compile>
+      <Compile Update="UI/Views/Windows/DownloadManagerWindow.axaml.cs">
+        <DependentUpon>DownloadManagerWindow.axaml</DependentUpon>
+      </Compile>
+    </ItemGroup>
+</Project>

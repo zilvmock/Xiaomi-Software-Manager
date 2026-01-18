@@ -1,0 +1,58 @@
+# Root allowlist: keep only solution files and project folders
+/*
+!/.gitignore
+!/*.sln
+!/Xiaomi Software Manager/
+!/Xiaomi Software Manager/**
+!/Tests/
+!/Tests/**
+!/Xiaomi Software Manager/.docs/
+!/Xiaomi Software Manager/.docs/**
+
+# Local Avalonia source/docs cache
+Xiaomi Software Manager/.docs/
+
+# Docs and notes
+Xiaomi Software Manager/Documentation/
+
+# Build outputs
+**/bin/
+**/obj/
+**/out/
+**/TestResults/
+**/BenchmarkDotNet.Artifacts/
+
+# User-specific IDE/SDK files
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+*.DotSettings.user
+*.DotSettings.user.*
+
+# Logs and diagnostics
+*.log
+logs/
+
+# Runtime assets (created next to the app base directory)
+**/bin/**/data/
+**/bin/**/drivers/
+**/bin/**/logs/
+**/bin/**/data/*.db
+**/bin/**/data/*.db-shm
+**/bin/**/data/*.db-wal
+
+# OS noise
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# NuGet and tooling artifacts
+*.nupkg
+*.snupkg
+**/packages/
+*.config.user

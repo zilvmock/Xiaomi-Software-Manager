@@ -1,0 +1,74 @@
+{
+  "domains": [
+    {
+      "domain": "bn.d.miui.com",
+      "type": "Public Mirror",
+      "primaryRegion": "Global / General",
+      "infrastructure": "High-Speed CDN",
+      "optimizationPriority": "Very High (Recommended Default)"
+    },
+    {
+      "domain": "cdnorg.d.miui.com",
+      "type": "Origin / Mirror",
+      "primaryRegion": "Global / Origin Access",
+      "infrastructure": "Origin Server",
+      "optimizationPriority": "Very High (Best for Speed/Freshness)"
+    },
+    {
+      "domain": "cdn-ota.azureedge.net",
+      "type": "Cloud Mirror",
+      "primaryRegion": "Europe / Americas",
+      "infrastructure": "Microsoft Azure",
+      "optimizationPriority": "High (Best for Western Users)"
+    },
+    {
+      "domain": "bigota.d.miui.com",
+      "type": "Legacy Mirror",
+      "primaryRegion": "Global Standard",
+      "infrastructure": "Akamai",
+      "optimizationPriority": "Medium (Reliable Fallback)"
+    },
+    {
+      "domain": "hugeota.d.miui.com",
+      "type": "Public Mirror",
+      "primaryRegion": "China / Large Files",
+      "infrastructure": "Akamai",
+      "optimizationPriority": "Medium (Use if bigota throttles)"
+    },
+    {
+      "domain": "airtel.bigota.d.miui.com",
+      "type": "ISP Mirror",
+      "primaryRegion": "India (Airtel Network)",
+      "infrastructure": "Airtel On-Net",
+      "optimizationPriority": "Critical (For Indian Users)"
+    },
+    {
+      "domain": "bkt-sgp-miui-ota-update-alisgp.oss-ap-southeast-1.aliyuncs.com",
+      "type": "Cloud Bucket",
+      "primaryRegion": "Southeast Asia",
+      "infrastructure": "Alibaba Cloud (SG)",
+      "optimizationPriority": "Critical (For ASEAN Users)"
+    },
+    {
+      "domain": "ks3orig.bigota.d.miui.com",
+      "type": "Origin Mirror",
+      "primaryRegion": "Global / Backup",
+      "infrastructure": "Kingsoft Cloud",
+      "optimizationPriority": "Low (Backup Origin)"
+    },
+    {
+      "domain": "enbigota.d.miui.com",
+      "type": "Legacy Mirror",
+      "primaryRegion": "Global (Legacy)",
+      "infrastructure": "Akamai",
+      "optimizationPriority": "Low (Mostly older devices)"
+    },
+    {
+      "domain": "cos.ap-guangzhou.myqcloud.com",
+      "type": "Cloud Bucket",
+      "primaryRegion": "China / IoT",
+      "infrastructure": "Tencent Cloud",
+      "optimizationPriority": "Specific (IoT/China Hardware)"
+    }
+  ]
+}

@@ -1,0 +1,529 @@
+<Window xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:xsm.Controls"
+	xmlns:icons="using:FluentIcons.Avalonia"
+	xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:vm="clr-namespace:xsm.ViewModels.Windows"
+	mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+	MinHeight="600"
+	MinWidth="600"
+	x:Class="xsm.UI.Views.Windows.MainWindow"
+	x:DataType="vm:MainWindowViewModel"
+	Title="xsm">
+	<Grid RowDefinitions="*"
+		Margin="12"
+		RowSpacing="12">
+		<TabControl Grid.Row="0"
+			IsEnabled="{Binding IsReady}">
+			<TabItem Header="Software">
+				<Grid RowDefinitions="Auto,Auto,*"
+					RowSpacing="12"
+					Margin="4">
+					<Grid Grid.Row="0"
+						ColumnDefinitions="*,Auto"
+						ColumnSpacing="12">
+						<controls:LogConsole Grid.Column="0"
+							Items="{Binding Entries}"
+							MinHeight="220"
+							MaxHeight="220" />
+
+						<Border Grid.Column="1"
+							Padding="8"
+							CornerRadius="6"
+							BorderThickness="1"
+							BorderBrush="#D0D5DD"
+							VerticalAlignment="Stretch">
+							<Grid RowDefinitions="Auto,*,Auto">
+								<StackPanel Grid.Row="0"
+									HorizontalAlignment="Stretch"
+									Spacing="6">
+								<controls:TaskButton Click="FetchData_OnClick"
+									IsEnabled="{Binding CanScrape}"
+									IsRunning="{Binding IsScraping}"
+									Text="Fetch Data"
+									RunningText="Fetching..."
+									Icon="ArrowSync"
+									SpinnerIcon="ArrowSync" />
+								<Button Click="StopScrape_OnClick"
+									IsEnabled="{Binding IsScraping}"
+									IsVisible="{Binding IsScraping}"
+									HorizontalAlignment="Stretch">
+									<StackPanel Orientation="Horizontal"
+										Spacing="6"
+										VerticalAlignment="Center">
+										<icons:FluentIcon Icon="Dismiss"
+											IconVariant="Regular"
+											IconSize="Size16" />
+										<TextBlock Text="Stop Fetch"
+											VerticalAlignment="Center" />
+									</StackPanel>
+								</Button>
+								</StackPanel>
+
+								<StackPanel Grid.Row="2"
+									HorizontalAlignment="Stretch"
+									Spacing="6">
+									<Button HorizontalAlignment="Stretch"
+										IsEnabled="{Binding CanDownloadSelected}"
+										Click="DownloadSelected_OnClick">
+										<StackPanel Orientation="Horizontal"
+											Spacing="6"
+											VerticalAlignment="Center">
+											<icons:FluentIcon Icon="ArrowDownload"
+												IconVariant="Regular"
+												IconSize="Size16" />
+											<TextBlock Text="Download Selected"
+												VerticalAlignment="Center" />
+										</StackPanel>
+									</Button>
+									<Button HorizontalAlignment="Stretch"
+										IsEnabled="{Binding CanStopDownloads}"
+										IsVisible="{Binding CanStopDownloads}"
+										Click="StopAllDownloads_OnClick">
+										<StackPanel Orientation="Horizontal"
+											Spacing="6"
+											VerticalAlignment="Center">
+											<icons:FluentIcon Icon="Dismiss"
+												IconVariant="Regular"
+												IconSize="Size16" />
+											<TextBlock Text="Stop All Downloads"
+												VerticalAlignment="Center" />
+										</StackPanel>
+									</Button>
+									<Button HorizontalAlignment="Stretch"
+										Click="SelectOutdated_OnClick">
+										<StackPanel Orientation="Horizontal"
+											Spacing="6"
+											VerticalAlignment="Center">
+											<icons:FluentIcon Icon="Clock"
+												IconVariant="Regular"
+												IconSize="Size16" />
+											<TextBlock Text="Select Outdated"
+												VerticalAlignment="Center" />
+										</StackPanel>
+									</Button>
+									<Button HorizontalAlignment="Stretch"
+										IsEnabled="{Binding HasSelectedSoftware}"
+										Click="DeselectAll_OnClick">
+										<StackPanel Orientation="Horizontal"
+											Spacing="6"
+											VerticalAlignment="Center">
+											<icons:FluentIcon Icon="Dismiss"
+												IconVariant="Regular"
+												IconSize="Size16" />
+											<TextBlock Text="Deselect All"
+												VerticalAlignment="Center" />
+										</StackPanel>
+									</Button>
+								</StackPanel>
+							</Grid>
+						</Border>
+					</Grid>
+					
+					<Grid Grid.Row="1"
+						ColumnDefinitions="*,*"
+						ColumnSpacing="12">
+						<Border Grid.Column="0"
+							Padding="8"
+							CornerRadius="6"
+							BorderThickness="1"
+							BorderBrush="#D0D5DD">
+							<Grid ColumnDefinitions="*,Auto"
+								ColumnSpacing="8"
+								VerticalAlignment="Center">
+								<TextBox Grid.Column="0"
+									Watermark="Search..."
+									Text="{Binding SearchText, Mode=TwoWay}"
+									BorderThickness="0"
+									BorderBrush="Transparent"
+									Background="Transparent"
+									FocusAdorner="{x:Null}"
+									VerticalContentAlignment="Center"
+									KeyDown="SearchBox_OnKeyDown" />
+								<Button Grid.Column="1"
+									Content="Search"
+									Click="Search_OnClick" />
+							</Grid>
+						</Border>
+
+						<Border Grid.Column="1"
+							Padding="8"
+							CornerRadius="6"
+							BorderThickness="1"
+							BorderBrush="#D0D5DD">
+							<Grid ColumnDefinitions="*,Auto"
+								ColumnSpacing="8"
+								VerticalAlignment="Center">
+								<TextBlock Grid.Column="0"
+									Text="{Binding FilterSummaryText}"
+									TextTrimming="CharacterEllipsis"
+									TextWrapping="NoWrap"
+									VerticalAlignment="Center" />
+								<Button Grid.Column="1"
+									Width="32"
+									Height="30"
+									Click="RefreshLocal_OnClick"
+									IsEnabled="{Binding CanRefreshLocal}">
+									<icons:FluentIcon Icon="ArrowSync"
+										IconVariant="Regular"
+										IconSize="Size16" />
+								</Button>
+							</Grid>
+						</Border>
+					</Grid>
+
+					<Border Grid.Row="2"
+						Padding="8"
+						CornerRadius="6"
+						BorderThickness="1"
+						BorderBrush="#D0D5DD">
+						<Grid RowDefinitions="*,Auto">
+							<Grid Grid.Row="0">
+								<DataGrid x:Name="SoftwareGrid"
+									Classes="xsm-grid xsm-grid-striped"
+									ItemsSource="{Binding SoftwareItems}"
+									x:CompileBindings="False"
+									HeadersVisibility="Column"
+									AutoGenerateColumns="False"
+									CanUserResizeColumns="True"
+									CanUserReorderColumns="True"
+									CanUserSortColumns="True"
+									IsReadOnly="True"
+									SelectionMode="Extended"
+									Sorting="SoftwareGrid_OnSorting"
+									DoubleTapped="SoftwareGrid_OnDoubleTapped">
+									<DataGrid.Columns>
+										<DataGridTemplateColumn Header=""
+											Width="36"
+											CanUserSort="False">
+											<DataGridTemplateColumn.CellTemplate>
+												<DataTemplate>
+													<CheckBox HorizontalAlignment="Center"
+														IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+												</DataTemplate>
+											</DataGridTemplateColumn.CellTemplate>
+										</DataGridTemplateColumn>
+										<DataGridTextColumn Header="Name"
+											Binding="{Binding Name}"
+											SortMemberPath="Name" />
+										<DataGridTextColumn Header="Region"
+											Binding="{Binding RegionDisplay}"
+											SortMemberPath="RegionDisplay"
+											MinWidth="150">
+											<DataGridTextColumn.HeaderTemplate>
+												<DataTemplate>
+													<Grid ColumnDefinitions="*,Auto"
+														ColumnSpacing="6">
+														<TextBlock Grid.Column="0"
+															Text="Region"
+															VerticalAlignment="Center" />
+														<ToggleButton Grid.Column="1"
+															x:Name="RegionFilterButton"
+															Width="18"
+															Height="18"
+															Padding="0"
+															Background="Transparent">
+															<icons:FluentIcon Icon="ChevronDown"
+																IconVariant="Regular"
+																IconSize="Size12" />
+														</ToggleButton>
+														<Popup PlacementTarget="{Binding ElementName=RegionFilterButton}"
+															IsOpen="{Binding IsChecked, ElementName=RegionFilterButton, Mode=TwoWay}"
+															PlacementMode="Bottom"
+															IsLightDismissEnabled="True"
+															DataContext="{Binding DataContext, RelativeSource={RelativeSource AncestorType=DataGrid}}">
+															<Border BorderThickness="1"
+																BorderBrush="#D0D5DD"
+																CornerRadius="6"
+																Background="#FFFFFF"
+																Padding="8">
+																<ScrollViewer MaxHeight="240">
+																	<ItemsControl ItemsSource="{Binding RegionFilters}">
+																		<ItemsControl.ItemTemplate>
+																			<DataTemplate>
+																				<CheckBox Content="{Binding Label}"
+																					IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+																			</DataTemplate>
+																		</ItemsControl.ItemTemplate>
+																	</ItemsControl>
+																</ScrollViewer>
+															</Border>
+														</Popup>
+													</Grid>
+												</DataTemplate>
+											</DataGridTextColumn.HeaderTemplate>
+										</DataGridTextColumn>
+										<DataGridTextColumn Header="Codename"
+											Binding="{Binding Codename}"
+											SortMemberPath="Codename"
+											MinWidth="140" />
+										<DataGridTemplateColumn Header="Latest Web Version"
+											Width="*"
+											CanUserSort="True"
+											SortMemberPath="WebVersion">
+											<DataGridTemplateColumn.CellTemplate>
+												<DataTemplate>
+													<TextBlock Text="{Binding WebVersion}"
+														Classes="xsm-grid-web-version"
+														VerticalAlignment="Center" />
+												</DataTemplate>
+											</DataGridTemplateColumn.CellTemplate>
+										</DataGridTemplateColumn>
+										<DataGridTemplateColumn Header="Latest Local Version"
+											Width="*"
+											CanUserSort="True"
+											SortMemberPath="LocalVersion">
+											<DataGridTemplateColumn.CellTemplate>
+												<DataTemplate>
+													<TextBlock Text="{Binding LocalVersion}"
+														Classes="xsm-grid-local-version"
+														VerticalAlignment="Center"/>
+												</DataTemplate>
+											</DataGridTemplateColumn.CellTemplate>
+										</DataGridTemplateColumn>
+										<DataGridTextColumn Header="Folder Size"
+											Binding="{Binding LocalFolderSizeText}"
+											SortMemberPath="LocalFolderSizeBytes"
+											MinWidth="140" />
+										<DataGridTextColumn Header="Up To Date"
+											Binding="{Binding UpToDateText}"
+											SortMemberPath="UpToDateText"
+											MinWidth="140" />
+									</DataGrid.Columns>
+								</DataGrid>
+								<TextBlock Text="No entries were found."
+									Foreground="#6B7280"
+									FontSize="12"
+									HorizontalAlignment="Center"
+									VerticalAlignment="Center"
+									IsVisible="{Binding ShowNoResults}"
+									IsHitTestVisible="False" />
+							</Grid>
+
+								<Border Grid.Row="1"
+									BorderThickness="0,1,0,0"
+									BorderBrush="#E5E7EB"
+									Padding="8,6">
+									<Grid ColumnDefinitions="Auto,*,2*"
+										ColumnSpacing="12"
+										VerticalAlignment="Center"
+										ClipToBounds="True">
+										<StackPanel Grid.Column="0"
+											Orientation="Horizontal"
+											Spacing="12">
+											<TextBlock Text="{Binding SoftwareCount, StringFormat=Total: {0}}" />
+											<TextBlock Text="{Binding SelectedSoftwareCount, StringFormat=Selected: {0}}"
+												IsVisible="{Binding HasSelectedSoftware}" />
+										</StackPanel>
+
+										<Grid Grid.Column="1"
+											ColumnDefinitions="*,*"
+											ColumnSpacing="12"
+											HorizontalAlignment="Stretch"
+											ClipToBounds="True">
+											<TextBlock Grid.Column="0"
+												Text="{Binding DiskStatsText}"
+												TextAlignment="Center"
+												TextTrimming="CharacterEllipsis"
+												TextWrapping="NoWrap" />
+											<TextBlock Grid.Column="1"
+												Text="{Binding LocalFolderSizeText}"
+												TextAlignment="Center"
+												TextTrimming="CharacterEllipsis"
+												TextWrapping="NoWrap" />
+										</Grid>
+
+										<Grid Grid.Column="2"
+											ColumnDefinitions="*,Auto"
+											ColumnSpacing="8"
+											HorizontalAlignment="Stretch"
+											VerticalAlignment="Center">
+											<TextBlock Grid.Column="0"
+												Text="{Binding DownloadManager.SummaryText}"
+												TextTrimming="CharacterEllipsis"
+												TextWrapping="NoWrap"
+												HorizontalAlignment="Stretch"
+												IsVisible="{Binding DownloadManager.HasActiveDownloads}" />
+											<Button Grid.Column="1"
+												Content="Open"
+												IsVisible="{Binding DownloadManager.HasActiveDownloads}"
+												Click="OpenDownloadManager_OnClick" />
+										</Grid>
+									</Grid>
+								</Border>
+						</Grid>
+					</Border>
+				</Grid>
+			</TabItem>
+			<TabItem Header="Options">
+				<TabControl Margin="8"
+					TabStripPlacement="Left"
+					HorizontalContentAlignment="Stretch"
+					VerticalContentAlignment="Stretch">
+					<TabItem Header="Download Domains">
+						<Grid Margin="8">
+							<Border Padding="12"
+								CornerRadius="6"
+								BorderThickness="1"
+								BorderBrush="#D0D5DD">
+								<StackPanel Spacing="12">
+									<StackPanel Spacing="4">
+										<TextBlock Text="Download domains"
+											FontSize="14"
+											FontWeight="SemiBold" />
+										<TextBlock Text="Pick preferred mirrors and monitor their availability."
+											FontSize="11"
+											Foreground="#6B7280" />
+									</StackPanel>
+
+									<Border Padding="8"
+										CornerRadius="6"
+										BorderThickness="1"
+										BorderBrush="#E5E7EB">
+										<StackPanel Spacing="8">
+											<DataGrid ItemsSource="{Binding DownloadDomains}"
+												Classes="xsm-grid xsm-grid-striped"
+												HeadersVisibility="Column"
+												AutoGenerateColumns="False"
+												CanUserResizeColumns="True"
+												CanUserReorderColumns="False"
+												CanUserSortColumns="True"
+												IsReadOnly="True"
+												SelectionMode="Single"
+												MinHeight="220">
+													<DataGrid.Columns>
+														<DataGridTemplateColumn Header=""
+															Width="28"
+															CanUserSort="False">
+															<DataGridTemplateColumn.CellTemplate>
+																<DataTemplate>
+																	<Border Width="10"
+																		Height="10"
+																		CornerRadius="5"
+																		Background="{Binding StatusColor}"
+																		HorizontalAlignment="Center"
+																		VerticalAlignment="Center" />
+																</DataTemplate>
+															</DataGridTemplateColumn.CellTemplate>
+														</DataGridTemplateColumn>
+														<DataGridTextColumn Header="Status"
+															Binding="{Binding StatusText}" />
+														<DataGridTextColumn Header="Domain"
+															Binding="{Binding Domain}"
+															Width="200"/>
+														<DataGridTextColumn Header="Ping"
+															Binding="{Binding LatencyText}" />
+														<DataGridTextColumn Header="Speed"
+															Binding="{Binding ThroughputText}" />
+													</DataGrid.Columns>
+												</DataGrid>
+
+											<controls:TaskButton Click="TestDomains_OnClick"
+												IsEnabled="{Binding CanTestDomains}"
+												IsRunning="{Binding IsRatingDomains}"
+												Text="Test Domains"
+												RunningText="Testing..."
+												Icon="ArrowSync"
+												SpinnerIcon="ArrowSync"
+												Width="160"
+												HorizontalAlignment="Left" />
+										</StackPanel>
+									</Border>
+								</StackPanel>
+							</Border>
+						</Grid>
+					</TabItem>
+					<TabItem Header="Folder Sources">
+						<Grid Margin="8">
+							<Border Padding="12"
+								CornerRadius="6"
+								BorderThickness="1"
+								BorderBrush="#D0D5DD">
+								<StackPanel Spacing="12">
+									<StackPanel Spacing="4">
+										<TextBlock Text="Folder Sources"
+											FontSize="14"
+											FontWeight="SemiBold" />
+										<TextBlock Text="Manage where local packages are discovered and synced from."
+											FontSize="11"
+											Foreground="#6B7280" />
+									</StackPanel>
+
+									<Border Padding="8"
+										CornerRadius="6"
+										BorderThickness="1"
+										BorderBrush="#E5E7EB"
+										Background="#F9FAFB">
+										<StackPanel Spacing="8">
+											<TextBlock Text="Local software folder"
+												FontSize="12"
+												Foreground="#6B7280" />
+											<TextBox Text="{Binding LocalSoftwarePath}"
+												Watermark="Select local software folder..."
+												IsReadOnly="True" />
+											<Button Content="Browse..." Click="SelectLocalFolder_OnClick" />
+										</StackPanel>
+									</Border>
+								</StackPanel>
+							</Border>
+						</Grid>
+					</TabItem>
+					<TabItem Header="About">
+						<Grid Margin="8">
+							<Border Padding="24"
+								CornerRadius="6"
+								BorderThickness="1"
+								BorderBrush="#D0D5DD">
+								<StackPanel Spacing="16"
+									HorizontalAlignment="Center"
+									VerticalAlignment="Center">
+									<TextBlock Text="XSM"
+										FontSize="48"
+										FontWeight="Bold"
+										HorizontalAlignment="Center" />
+									<TextBlock Text="{Binding AppVersion, StringFormat=Version {0}}"
+										FontSize="12"
+										Foreground="#6B7280"
+										HorizontalAlignment="Center" />
+									<Button Content="Check for updates"
+										Width="180"
+										HorizontalAlignment="Center" />
+								</StackPanel>
+							</Border>
+						</Grid>
+					</TabItem>
+				</TabControl>
+			</TabItem>
+		</TabControl>
+
+		<Border Grid.Row="0"
+			IsVisible="{Binding IsInitializing}"
+			Background="#CCF3F4F6">
+			<Grid>
+				<Border Padding="20"
+					CornerRadius="8"
+					BorderThickness="1"
+					BorderBrush="#E5E7EB"
+					Background="#FFFFFF"
+					HorizontalAlignment="Center"
+					VerticalAlignment="Center">
+					<StackPanel Spacing="8"
+						Width="260">
+						<TextBlock Text="{Binding LoadingMessage}"
+							FontSize="14"
+							FontWeight="SemiBold"
+							TextAlignment="Center" />
+						<ProgressBar IsIndeterminate="True"
+							Height="6" />
+						<TextBlock Text="This may take a moment."
+							FontSize="11"
+							Foreground="#6B7280"
+							TextAlignment="Center" />
+					</StackPanel>
+				</Border>
+			</Grid>
+		</Border>
+
+	</Grid>
+</Window>

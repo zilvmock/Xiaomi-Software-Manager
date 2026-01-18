@@ -1,0 +1,28 @@
+<Window xmlns="https://github.com/avaloniaui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	x:Class="xsm.UI.Views.Dialogs.ConfirmCloseDialog"
+	Title="Downloads in progress"
+	SizeToContent="WidthAndHeight"
+	CanResize="False"
+	WindowStartupLocation="CenterOwner">
+	<Border Padding="16"
+		CornerRadius="6"
+		BorderThickness="1"
+		BorderBrush="#D0D5DD">
+		<StackPanel Spacing="12"
+			Width="380">
+			<TextBlock Text="Downloads are in progress."
+				FontWeight="SemiBold" />
+			<TextBlock Text="If you quit now, the downloads will be canceled. Continue?"
+				TextWrapping="Wrap" />
+			<StackPanel Orientation="Horizontal"
+				HorizontalAlignment="Right"
+				Spacing="8">
+				<Button Content="Cancel"
+					Click="Cancel_OnClick" />
+				<Button Content="Quit"
+					Click="Quit_OnClick" />
+			</StackPanel>
+		</StackPanel>
+	</Border>
+</Window>

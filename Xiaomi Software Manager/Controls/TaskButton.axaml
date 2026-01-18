@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:controls="clr-namespace:xsm.Controls"
+		xmlns:icons="using:FluentIcons.Avalonia"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		x:Class="xsm.Controls.TaskButton"
+		x:Name="Root"
+		mc:Ignorable="d">
+	<UserControl.Styles>
+		<Style Selector="controls|TaskButton Border#SpinnerHost">
+			<Setter Property="IsVisible" Value="False" />
+		</Style>
+		<Style Selector="controls|TaskButton TextBlock#RunningTextBlock">
+			<Setter Property="IsVisible" Value="False" />
+		</Style>
+		<Style Selector="controls|TaskButton.running Border#SpinnerHost">
+			<Setter Property="IsVisible" Value="True" />
+		</Style>
+		<Style Selector="controls|TaskButton.running icons|FluentIcon#IdleIcon">
+			<Setter Property="IsVisible" Value="False" />
+		</Style>
+		<Style Selector="controls|TaskButton.running TextBlock#IdleText">
+			<Setter Property="IsVisible" Value="False" />
+		</Style>
+		<Style Selector="controls|TaskButton.running TextBlock#RunningTextBlock">
+			<Setter Property="IsVisible" Value="True" />
+		</Style>
+	</UserControl.Styles>
+	<Button x:Name="RootButton"
+			HorizontalAlignment="Stretch"
+			Click="RootButton_OnClick">
+		<StackPanel Orientation="Horizontal"
+					Spacing="6"
+					VerticalAlignment="Center">
+			<icons:FluentIcon x:Name="IdleIcon"
+							Icon="{Binding Icon, ElementName=Root}"
+							IconVariant="Regular"
+							IconSize="Size16" />
+			<Border x:Name="SpinnerHost"
+				Width="16"
+				Height="16"
+				VerticalAlignment="Center">
+				<icons:FluentIcon x:Name="SpinnerGlyph"
+					Icon="{Binding SpinnerIcon, ElementName=Root}"
+					IconVariant="Regular"
+					IconSize="Size16"
+					Width="16"
+					Height="16"
+					HorizontalAlignment="Center"
+					VerticalAlignment="Center" />
+			</Border>
+			<TextBlock x:Name="IdleText"
+						Text="{Binding Text, ElementName=Root}"
+						VerticalAlignment="Center" />
+			<TextBlock x:Name="RunningTextBlock"
+						Text="{Binding RunningText, ElementName=Root}"
+						VerticalAlignment="Center" />
+		</StackPanel>
+	</Button>
+</UserControl>
