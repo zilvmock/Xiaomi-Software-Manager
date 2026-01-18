@@ -1,6 +1,7 @@
 # Root allowlist: keep only solution files and project folders
 /*
 !/.gitignore
+!/.gitattributes
 !/*.sln
 !/.github/
 !/.github/**
