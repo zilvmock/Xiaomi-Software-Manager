@@ -342,6 +342,8 @@ public partial class MainWindow : Window
 				var dialog = new ScrapeIssuesDialog(issues);
 				await dialog.ShowDialog(this);
 			}
+
+			await LoadSoftwareAsync(ShutdownToken);
 		}
 		catch (OperationCanceledException)
 		{
@@ -402,6 +404,16 @@ public partial class MainWindow : Window
 			return;
 		}
 
+		var gridState = ViewModel.GetGridState();
+		var refreshedState = new SoftwareGridState
+		{
+			SearchText = string.Empty,
+			RegionAllSelected = gridState.RegionAllSelected,
+			SelectedRegions = gridState.SelectedRegions,
+			SortMemberPath = gridState.SortMemberPath,
+			SortDirection = gridState.SortDirection
+		};
+
 		Logger.Instance.Log("Refreshing local software list.");
 		ViewModel.IsRefreshingLocal = true;
 		try
@@ -411,6 +423,7 @@ public partial class MainWindow : Window
 			Logger.Instance.Log($"Local software scan completed. Updated {summary.Updated}/{summary.Total} entries.",
 				LogLevel.Info);
 			await LoadSoftwareAsync(ShutdownToken);
+			ViewModel.ApplyGridState(refreshedState);
 			await UpdateLocalStatsAsync();
 		}
 		catch (OperationCanceledException)
@@ -524,19 +537,39 @@ public partial class MainWindow : Window
 		await Task.Yield();
 		var repository = new AppSettingRepository(context);
 		var setting = await repository.GetByKeyAsync(SoftwareGridStateKey);
+		var defaultState = new SoftwareGridState
+		{
+			SearchText = string.Empty,
+			SortMemberPath = "LocalVersion",
+			SortDirection = ListSortDirection.Descending
+		};
+
 		if (string.IsNullOrWhiteSpace(setting?.Value))
 		{
-			return null;
+			return defaultState;
 		}
 
 		try
 		{
-			return JsonSerializer.Deserialize<SoftwareGridState>(setting.Value, GridStateSerializerOptions);
+			var saved = JsonSerializer.Deserialize<SoftwareGridState>(setting.Value, GridStateSerializerOptions);
+			if (saved == null)
+			{
+				return defaultState;
+			}
+
+			return new SoftwareGridState
+			{
+				SearchText = string.Empty,
+				RegionAllSelected = saved.RegionAllSelected,
+				SelectedRegions = saved.SelectedRegions ?? new List<string>(),
+				SortMemberPath = "LocalVersion",
+				SortDirection = ListSortDirection.Descending
+			};
 		}
 		catch (JsonException ex)
 		{
 			Logger.Instance.LogException(ex, "Failed to parse saved grid state.", LogLevel.Warning);
-			return null;
+			return defaultState;
 		}
 	}
 
