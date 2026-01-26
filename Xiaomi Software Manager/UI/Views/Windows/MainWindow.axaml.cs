@@ -537,19 +537,39 @@ public partial class MainWindow : Window
 		await Task.Yield();
 		var repository = new AppSettingRepository(context);
 		var setting = await repository.GetByKeyAsync(SoftwareGridStateKey);
+		var defaultState = new SoftwareGridState
+		{
+			SearchText = string.Empty,
+			SortMemberPath = "LocalVersion",
+			SortDirection = ListSortDirection.Descending
+		};
+
 		if (string.IsNullOrWhiteSpace(setting?.Value))
 		{
-			return null;
+			return defaultState;
 		}
 
 		try
 		{
-			return JsonSerializer.Deserialize<SoftwareGridState>(setting.Value, GridStateSerializerOptions);
+			var saved = JsonSerializer.Deserialize<SoftwareGridState>(setting.Value, GridStateSerializerOptions);
+			if (saved == null)
+			{
+				return defaultState;
+			}
+
+			return new SoftwareGridState
+			{
+				SearchText = string.Empty,
+				RegionAllSelected = saved.RegionAllSelected,
+				SelectedRegions = saved.SelectedRegions ?? new List<string>(),
+				SortMemberPath = "LocalVersion",
+				SortDirection = ListSortDirection.Descending
+			};
 		}
 		catch (JsonException ex)
 		{
 			Logger.Instance.LogException(ex, "Failed to parse saved grid state.", LogLevel.Warning);
-			return null;
+			return defaultState;
 		}
 	}
 
