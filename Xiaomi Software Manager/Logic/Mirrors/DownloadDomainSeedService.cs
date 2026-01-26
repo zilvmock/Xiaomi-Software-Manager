@@ -28,13 +28,30 @@ public static class DownloadDomainSeedService
 	{
 		ArgumentNullException.ThrowIfNull(context);
 
-		var path = string.IsNullOrWhiteSpace(seedPath) ? GetDefaultSeedPath() : seedPath;
-		if (!File.Exists(path))
+		var usingDefaultPath = string.IsNullOrWhiteSpace(seedPath);
+		var path = usingDefaultPath ? GetDefaultSeedPath() : seedPath!;
+		var sourcePath = path;
+		string? json = null;
+
+		if (File.Exists(path))
 		{
-			return new SeedSummary(path, 0, 0, 0, 0, false);
+			json = await File.ReadAllTextAsync(path, cancellationToken);
+		}
+		else if (usingDefaultPath)
+		{
+			var embedded = await TryReadEmbeddedSeedAsync(cancellationToken);
+			if (!string.IsNullOrWhiteSpace(embedded.Json))
+			{
+				json = embedded.Json;
+				sourcePath = embedded.Source ?? sourcePath;
+			}
 		}
 
-		var json = await File.ReadAllTextAsync(path, cancellationToken);
+		if (string.IsNullOrWhiteSpace(json))
+		{
+			return new SeedSummary(sourcePath, 0, 0, 0, 0, false);
+		}
+
 		var seed = JsonSerializer.Deserialize<DownloadDomainSeedFile>(json, JsonOptions);
 		var entries = seed?.Domains ?? new List<DownloadDomainSeedEntry>();
 
@@ -87,10 +104,32 @@ public static class DownloadDomainSeedService
 
 		await context.SaveChangesAsync(cancellationToken);
 
-		return new SeedSummary(path, normalized.Count, added, updated, removed.Count, true);
+		return new SeedSummary(sourcePath, normalized.Count, added, updated, removed.Count, true);
 	}
 
 	public sealed record SeedSummary(string Path, int Total, int Added, int Updated, int Removed, bool Loaded);
+
+	private static async Task<(string? Source, string? Json)> TryReadEmbeddedSeedAsync(CancellationToken cancellationToken)
+	{
+		var assembly = typeof(DownloadDomainSeedService).Assembly;
+		var resourceName = assembly.GetManifestResourceNames()
+			.FirstOrDefault(name => name.EndsWith(SeedFileName, StringComparison.OrdinalIgnoreCase));
+
+		if (string.IsNullOrWhiteSpace(resourceName))
+		{
+			return (null, null);
+		}
+
+		await using var stream = assembly.GetManifestResourceStream(resourceName);
+		if (stream == null)
+		{
+			return (null, null);
+		}
+
+		using var reader = new StreamReader(stream);
+		var json = await reader.ReadToEndAsync(cancellationToken);
+		return ($"embedded:{resourceName}", json);
+	}
 
 	private sealed class DownloadDomainSeedFile
 	{

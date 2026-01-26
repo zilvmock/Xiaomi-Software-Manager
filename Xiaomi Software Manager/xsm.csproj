@@ -35,9 +35,16 @@
         <PackageReference Include="DotNetSeleniumExtras.WaitHelpers" Version="3.11.0" />
     </ItemGroup>
 
-    <ItemGroup>
-        <Content Include="Data/Seeds/download-domains.json" CopyToOutputDirectory="PreserveNewest" />
-    </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Data/Seeds/download-domains.json" />
+	</ItemGroup>
+
+	<Target Name="RemoveSeleniumManagerContent" BeforeTargets="AssignTargetPaths">
+		<ItemGroup>
+			<Content Remove="@(Content)"
+			         Condition="'%(Content.Link)' != '' and $([System.String]::Copy('%(Content.Link)').StartsWith('selenium-manager'))" />
+		</ItemGroup>
+	</Target>
 
   <ItemGroup>
       <Compile Update="UI/Views/Dialogs/ConfirmCloseDialog.axaml.cs">
