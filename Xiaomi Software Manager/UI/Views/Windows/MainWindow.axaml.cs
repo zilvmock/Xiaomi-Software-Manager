@@ -404,6 +404,16 @@ public partial class MainWindow : Window
 			return;
 		}
 
+		var gridState = ViewModel.GetGridState();
+		var refreshedState = new SoftwareGridState
+		{
+			SearchText = string.Empty,
+			RegionAllSelected = gridState.RegionAllSelected,
+			SelectedRegions = gridState.SelectedRegions,
+			SortMemberPath = gridState.SortMemberPath,
+			SortDirection = gridState.SortDirection
+		};
+
 		Logger.Instance.Log("Refreshing local software list.");
 		ViewModel.IsRefreshingLocal = true;
 		try
@@ -413,6 +423,7 @@ public partial class MainWindow : Window
 			Logger.Instance.Log($"Local software scan completed. Updated {summary.Updated}/{summary.Total} entries.",
 				LogLevel.Info);
 			await LoadSoftwareAsync(ShutdownToken);
+			ViewModel.ApplyGridState(refreshedState);
 			await UpdateLocalStatsAsync();
 		}
 		catch (OperationCanceledException)
