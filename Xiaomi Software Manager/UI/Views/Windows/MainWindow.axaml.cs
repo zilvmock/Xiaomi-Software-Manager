@@ -342,6 +342,8 @@ public partial class MainWindow : Window
 				var dialog = new ScrapeIssuesDialog(issues);
 				await dialog.ShowDialog(this);
 			}
+
+			await LoadSoftwareAsync(ShutdownToken);
 		}
 		catch (OperationCanceledException)
 		{
