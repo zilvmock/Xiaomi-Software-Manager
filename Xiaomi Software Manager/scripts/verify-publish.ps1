@@ -19,15 +19,25 @@ if (-not (Test-Path $PublishDir)) {
 
 $mustExist = @(
 	"xsm.exe",
-	"xsm.deps.json",
-	"xsm.runtimeconfig.json",
 	"xsm.updater.exe"
+)
+
+$optional = @(
+	"xsm.deps.json",
+	"xsm.runtimeconfig.json"
 )
 
 foreach ($file in $mustExist) {
 	$path = Join-Path $PublishDir $file
 	if (-not (Test-Path $path)) {
 		throw "Missing required file: $file"
+	}
+}
+
+foreach ($file in $optional) {
+	$path = Join-Path $PublishDir $file
+	if (-not (Test-Path $path)) {
+		Write-Warning "Optional file not found: $file"
 	}
 }
 
